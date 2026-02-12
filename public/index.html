@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Chatbot powered by Llama 3.2 with NLP, Sentiment Analysis & Smart Analytics">
+    <title>AI Chatbot - Enterprise Intelligence Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Conversation History Sidebar -->
+    <aside class="history-sidebar" id="historySidebar">
+        <div class="history-header">
+            <h2>📚 Conversations</h2>
+            <button id="newChatBtn" class="new-chat-btn" aria-label="Start new conversation">+</button>
+        </div>
+        
+        <div class="history-search">
+            <input 
+                type="text" 
+                id="historySearch" 
+                placeholder="Search conversations..."
+                class="history-search-input"
+            >
+        </div>
+        
+        <div class="history-list" id="historyList">
+            <!-- Past conversations will be listed here -->
+        </div>
+        
+        <div class="history-footer">
+            <button id="deleteAllBtn" class="history-action-btn delete-btn">🗑️ Clear All</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <button id="toggleHistoryBtn" class="toggle-history-btn" aria-label="Toggle conversation history">☰</button>
+            <div class="header-content">
+                <h1>AI Chatbot</h1>
+                <p>Conversational AI with Sentiment Analysis & Smart Analytics</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Chat Section -->
+            <section class="chat-column">
+                <div class="chat-header">
+                    <h2>💬 Conversation</h2>
+                </div>
+                
+                <div class="chat-history" id="chatHistory" role="log" aria-live="polite">
+                    <!-- Messages will be added here -->
+                </div>
+
+                <form class="chat-input-container" onsubmit="return false;">
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        class="chat-input" 
+                        placeholder="Type your message here..."
+                        autocomplete="off"
+                        aria-label="Message input"
+                    >
+                    <button id="voiceInputBtn" class="voice-btn" type="button" title="Speak your message" aria-label="Voice input">
+                        🎤
+                    </button>
+                    <button id="sendBtn" class="send-btn" type="button" aria-label="Send message">
+                        Send
+                    </button>
+                </form>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="analytics-column">
+                <div class="analytics-header">
+                    <h2>📊 Analytics</h2>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-label">Total Messages</div>
+                        <div class="metric-value" id="totalMessages">0</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">User Messages</div>
+                        <div class="metric-value" id="userMessages">0</div>
+                    </div>
+                </div>
+
+                <!-- Sentiment Distribution -->
+                <div class="chart-container">
+                    <h3>Sentiment Analysis</h3>
+                    <div id="sentimentChart" class="chart"></div>
+                </div>
+
+                <!-- Intent Detection -->
+                <div class="chart-container">
+                    <h3>Intent Detection</h3>
+                    <div id="intentChart" class="chart"></div>
+                </div>
+
+                <!-- Feedback Metrics -->
+                <div class="feedback-container">
+                    <h3>User Satisfaction</h3>
+                    <div class="feedback-bar">
+                        <div id="satisfactionBar" class="satisfaction-progress"></div>
+                    </div>
+                    <p id="satisfactionText">No feedback yet</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" role="navigation" aria-label="Controls and settings">
+            <!-- Features Section -->
+            <div class="sidebar-section">
+                <h3>Features</h3>
+                <nav class="features-list">
+                    <div class="feature-group">
+                        <h4>NLP Understanding</h4>
+                        <ul>
+                            <li>Intent Recognition</li>
+                            <li>Entity Extraction</li>
+                            <li>Context Awareness</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Sentiment Analysis</h4>
+                        <ul>
+                            <li>Real-time detection</li>
+                            <li>Adaptive responses</li>
+                            <li>Empathy-driven replies</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Smart Analytics</h4>
+                        <ul>
+                            <li>Live tracking</li>
+                            <li>Sentiment breakdown</li>
+                            <li>Intent analysis</li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+            <hr>
+
+            <!-- Settings Section -->
+            <div class="sidebar-section">
+                <h3>Settings</h3>
+                <div class="setting-group">
+                    <label for="temperatureSlider">Response Creativity</label>
+                    <input 
+                        type="range" 
+                        id="temperatureSlider" 
+                        min="0" 
+                        max="1" 
+                        step="0.1" 
+                        value="0.7"
+                        class="slider"
+                        aria-label="Adjust response creativity level"
+                    >
+                    <span id="tempValue">0.7</span>
+                    <small>Low = focused | High = creative</small>
+                </div>
+                <div class="setting-group">
+                    <label for="voiceToggle">
+                        <input 
+                            type="checkbox" 
+                            id="voiceToggle" 
+                            aria-label="Enable voice replies"
+                        >
+                        Auto-play voice replies
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label for="realtimeVoiceToggle">
+                        <input
+                            type="checkbox"
+                            id="realtimeVoiceToggle"
+                            aria-label="Enable realtime local voice"
+                        >
+                        Realtime voice (local)
+                    </label>
+                    <div id="realtimeStatus" class="voice-status">Local voice: disconnected</div>
+                </div>
+                <div class="setting-group">
+                    <label for="voiceSpeedSlider">Voice Speed</label>
+                    <input 
+                        type="range" 
+                        id="voiceSpeedSlider" 
+                        min="0.5" 
+                        max="2" 
+                        step="0.1" 
+                        value="1"
+                        class="slider"
+                        aria-label="Adjust voice speed"
+                    >
+                    <span id="voiceSpeedValue">1.0x</span>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Controls Section -->
+            <div class="sidebar-section">
+                <h3>Controls</h3>
+                <button id="clearChatBtn" class="control-btn" aria-label="Clear chat history">
+                    🗑️ Clear Chat
+                </button>
+                <button id="exportBtn" class="control-btn" aria-label="Export conversation data">
+                    📥 Export
+                </button>
+                <button id="resetAnalyticsBtn" class="control-btn" aria-label="Reset analytics">
+                    🔄 Reset
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="sidebar-footer">
+                💡 <strong>Pro Tip:</strong> Conversations are stored locally and can be exported anytime.
+            </div>
+        </aside>
+    </div>
+
+    <!-- Advanced Analytics Dashboard -->
+    <section class="advanced-analytics">
+        <h2>📈 Intelligence Dashboard</h2>
+        
+        <div class="dashboard-grid">
+            <!-- AI Capabilities -->
+            <article class="dashboard-card">
+                <h3>🎯 System Capabilities</h3>
+                <div id="radarChart" class="chart-large"></div>
+            </article>
+
+            <!-- Challenges & Solutions -->
+            <article class="dashboard-card">
+                <h3>🚧 Technical Overview</h3>
+                <div class="challenges-list">
+                    <div class="challenge-item">
+                        <strong>Complex Query Handling</strong>
+                        <p>✓ Advanced NLP Processing</p>
+                    </div>
+                    <div class="challenge-item">
+                        <strong>Multi-Intent Support</strong>
+                        <p>✓ Intent Prioritization</p>
+                    </div>
+                    <div class="challenge-item">
+                        <strong>Real-Time Performance</strong>
+                        <p>✓ Optimized Response Pipeline</p>
+                    </div>
+                    <div class="challenge-item">
+                        <strong>Ethical AI</strong>
+                        <p>✓ Bias Detection & Mitigation</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Future Roadmap -->
+            <article class="dashboard-card">
+                <h3>🚀 Roadmap</h3>
+                <div class="features-list">
+                    <ul>
+                        <li>🎤 Voice Integration</li>
+                        <li>🌍 Multilingual Support</li>
+                        <li>🔮 Predictive Suggestions</li>
+                        <li>📱 Mobile Apps</li>
+                        <li>🤝 Platform Integrations</li>
+                        <li>🧠 Memory Enhancement</li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+
+        <!-- Conversation Flow Analysis -->
+        <div class="flow-analysis" id="flowAnalysisContainer" style="display: none;">
+            <h3>📉 Conversation Flow Metrics</h3>
+            <div class="flow-grid">
+                <div id="flowChart" class="chart-large"></div>
+                <div id="sentimentTrendChart" class="chart-large"></div>
+            </div>
+        </div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
